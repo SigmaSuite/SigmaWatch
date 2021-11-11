@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sigma-watch
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sigma-watch
+    spec:
+      containers:
+      - name: sigma-watch
+        image: ghcr.io/sigmasuite/SigmaWatch:main
+        ports:
+          - containerPort: 4000
+        imagePullPolicy: Always
+      imagePullSecrets:
+        - name: ghcr-secret
+  selector:
+    matchLabels:
+      app: sigma-watch
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sigma-watch
+spec:
+  type: ClusterIP
+  selector:
+    app: sigma-watch
+  ports:
+    - port: 4000
+      targetPort: 4000
